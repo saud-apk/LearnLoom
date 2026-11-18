@@ -1,0 +1,196 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helpers
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidUser(data) {
+      return data.uid is string && data.uid.size() > 0 && data.uid.size() <= 128
+        && (!('email' in data) || (data.email is string && data.email.size() <= 254))
+        && (!('displayName' in data) || (data.displayName is string && data.displayName.size() <= 100))
+        && (!('handle' in data) || (data.handle is string && data.handle.size() <= 60))
+        && (!('photoURL' in data) || (data.photoURL is string && data.photoURL.size() <= 1000))
+        && (!('age' in data) || (data.age is number || (data.age is string && data.age.size() <= 10)))
+        && (!('studentClass' in data) || (data.studentClass is string && data.studentClass.size() <= 100))
+        && (!('educationStage' in data) || (data.educationStage is string && data.educationStage.size() <= 60))
+        && (!('gradeBadge' in data) || (data.gradeBadge is string && data.gradeBadge.size() <= 60))
+        && (!('institutionName' in data) || (data.institutionName is string && data.institutionName.size() <= 150))
+        && (!('college' in data) || (data.college is string && data.college.size() <= 150))
+        && (!('subjects' in data) || (data.subjects is list && data.subjects.size() <= 25))
+        && (!('dailyGoal' in data) || (data.dailyGoal is string && data.dailyGoal.size() <= 100))
+        && (!('dailyCommitment' in data) || (data.dailyCommitment is string && data.dailyCommitment.size() <= 100))
+        && (!('primaryGoal' in data) || (data.primaryGoal is string && data.primaryGoal.size() <= 150))
+        && (!('studyTimePreference' in data) || (data.studyTimePreference is string && data.studyTimePreference.size() <= 100))
+        && (!('avatarIcon' in data) || (data.avatarIcon is string && data.avatarIcon.size() <= 50))
+        && (!('avatarLabel' in data) || (data.avatarLabel is string && data.avatarLabel.size() <= 50))
+        && (!('avatar' in data) || data.avatar is map)
+        && (!('personal' in data) || data.personal is map)
+        && (!('academic' in data) || data.academic is map)
+        && (!('studyPlan' in data) || data.studyPlan is map)
+        && (!('status' in data) || data.status is map)
+        && (!('studyMotto' in data) || (data.studyMotto is string && data.studyMotto.size() <= 200))
+        && (!('onboardingCompleted' in data) || data.onboardingCompleted is bool)
+        && (!('onboardingCompletedAt' in data) || (data.onboardingCompletedAt is string && data.onboardingCompletedAt.size() <= 50))
+        && (!('role' in data) || (data.role is string && data.role.size() <= 30))
+        && (!('accountStatus' in data) || (data.accountStatus is string && data.accountStatus.size() <= 30))
+        && (!('streakDays' in data) || data.streakDays is number)
+        && (!('lastActiveDate' in data) || (data.lastActiveDate is string && data.lastActiveDate.size() <= 50))
+        && (!('major' in data) || (data.major is string && data.major.size() <= 100))
+        && (!('year' in data) || (data.year is string && data.year.size() <= 50))
+        && (!('bio' in data) || (data.bio is string && data.bio.size() <= 500))
+        && (!('savedPostIds' in data) || (data.savedPostIds is list && data.savedPostIds.size() <= 500))
+        && (!('createdAt' in data) || (data.createdAt is string && data.createdAt.size() <= 50))
+        && (!('updatedAt' in data) || (data.updatedAt is string && data.updatedAt.size() <= 50));
+    }
+
+    function isValidRoom(data) {
+      return data.title is string && data.title.size() > 0 && data.title.size() <= 120
+        && data.topic is string && data.topic.size() > 0 && data.topic.size() <= 80
+        && (!('description' in data) || (data.description is string && data.description.size() <= 500))
+        && data.hostId is string && data.hostId.size() > 0 && data.hostId.size() <= 128
+        && data.hostName is string && data.hostName.size() > 0 && data.hostName.size() <= 100
+        && (!('membersCount' in data) || data.membersCount is number)
+        && (!('activeNow' in data) || data.activeNow is number)
+        && (!('tags' in data) || (data.tags is list && data.tags.size() <= 10))
+        && data.createdAt is string && data.createdAt.size() <= 50;
+    }
+
+    function isValidNote(data) {
+      return data.title is string && data.title.size() > 0 && data.title.size() <= 150
+        && data.subject is string && data.subject.size() > 0 && data.subject.size() <= 100
+        && (!('description' in data) || (data.description is string && data.description.size() <= 600))
+        && (!('resourceLink' in data) || (data.resourceLink is string && data.resourceLink.size() <= 500))
+        && data.authorId is string && data.authorId.size() > 0 && data.authorId.size() <= 128
+        && data.authorName is string && data.authorName.size() > 0 && data.authorName.size() <= 100
+        && (!('likesCount' in data) || data.likesCount is number)
+        && data.createdAt is string && data.createdAt.size() <= 50;
+    }
+
+    function isValidContactMessage(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() <= 100
+        && data.email is string && data.email.size() > 0 && data.email.size() <= 254
+        && (!('subject' in data) || (data.subject is string && data.subject.size() <= 150))
+        && data.message is string && data.message.size() > 0 && data.message.size() <= 2000
+        && data.createdAt is string && data.createdAt.size() <= 50;
+    }
+
+    function isValidFeedPost(data) {
+      return data.authorId is string && data.authorId.size() > 0 && data.authorId.size() <= 128
+        && data.authorName is string && data.authorName.size() > 0 && data.authorName.size() <= 100
+        && (!('authorHandle' in data) || (data.authorHandle is string && data.authorHandle.size() <= 60))
+        && (!('authorPhotoURL' in data) || (data.authorPhotoURL is string && data.authorPhotoURL.size() <= 1000))
+        && (!('authorClass' in data) || (data.authorClass is string && data.authorClass.size() <= 100))
+        && (!('authorAvatar' in data) || (data.authorAvatar is string && data.authorAvatar.size() <= 50))
+        && data.content is string && data.content.size() > 0 && data.content.size() <= 5000
+        && (!('imageURL' in data) || (data.imageURL is string && data.imageURL.size() <= 1000))
+        && (!('likesCount' in data) || data.likesCount is number)
+        && (!('likedUserIds' in data) || (data.likedUserIds is list && data.likedUserIds.size() <= 1000))
+        && (!('commentsCount' in data) || data.commentsCount is number)
+        && (!('comments' in data) || (data.comments is list && data.comments.size() <= 200))
+        && (!('viewsCount' in data) || data.viewsCount is number)
+        && (!('viewedUserIds' in data) || (data.viewedUserIds is list && data.viewedUserIds.size() <= 2000))
+        && (!('poll' in data) || data.poll is map)
+        && (!('mcq' in data) || data.mcq is map)
+        && (!('isSolved' in data) || data.isSolved is bool)
+        && (!('acceptedAnswerId' in data) || (data.acceptedAnswerId is string && data.acceptedAnswerId.size() <= 128))
+        && data.createdAt is string && data.createdAt.size() <= 50;
+    }
+
+    // Users Collection
+    match /users/{userId} {
+      allow get: if isOwner(userId) && isValidId(userId);
+      allow create: if isOwner(userId) && isValidId(userId)
+        && incoming().uid == userId
+        && isValidUser(incoming());
+      allow update: if isOwner(userId) && isValidId(userId)
+        && incoming().uid == existing().uid
+        && isValidUser(incoming());
+      allow delete: if false;
+      allow list: if false;
+    }
+
+    // Study Rooms Collection
+    match /rooms/{roomId} {
+      allow read: if isValidId(roomId);
+      allow list: if true;
+      allow create: if isSignedIn() && isValidId(roomId)
+        && incoming().hostId == request.auth.uid
+        && isValidRoom(incoming());
+      allow update: if isSignedIn() && isValidId(roomId)
+        && (
+          (existing().hostId == request.auth.uid && isValidRoom(incoming())) ||
+          incoming().diff(existing()).affectedKeys().hasOnly(['membersCount', 'activeNow'])
+        );
+      allow delete: if isSignedIn() && isValidId(roomId) && existing().hostId == request.auth.uid;
+    }
+
+    // Study Notes & Resources Collection
+    match /notes/{noteId} {
+      allow read: if isValidId(noteId);
+      allow list: if true;
+      allow create: if isSignedIn() && isValidId(noteId)
+        && incoming().authorId == request.auth.uid
+        && isValidNote(incoming());
+      allow update: if isSignedIn() && isValidId(noteId)
+        && (
+          (existing().authorId == request.auth.uid && isValidNote(incoming())) ||
+          incoming().diff(existing()).affectedKeys().hasOnly(['likesCount'])
+        );
+      allow delete: if isSignedIn() && isValidId(noteId) && existing().authorId == request.auth.uid;
+    }
+
+    // Contact Inquiries Collection
+    match /contactMessages/{messageId} {
+      allow create: if isValidId(messageId) && isValidContactMessage(incoming());
+      allow read, update, delete: if false;
+    }
+
+    // Live Student Feed Posts Collection
+    match /posts/{postId} {
+      allow read: if isValidId(postId);
+      allow list: if true;
+      allow create: if isSignedIn() && isValidId(postId)
+        && incoming().authorId == request.auth.uid
+        && isValidFeedPost(incoming());
+      allow update: if isSignedIn() && isValidId(postId)
+        && (
+          // Post author updating own post
+          (existing().authorId == request.auth.uid && isValidFeedPost(incoming())) ||
+          // Peers liking / unliking
+          incoming().diff(existing()).affectedKeys().hasOnly(['likesCount', 'likedUserIds']) ||
+          // Peers adding answers / replies or author marking verified solution
+          incoming().diff(existing()).affectedKeys().hasOnly(['comments', 'commentsCount', 'isSolved', 'acceptedAnswerId']) ||
+          // Peers recording views
+          incoming().diff(existing()).affectedKeys().hasOnly(['viewsCount', 'viewedUserIds']) ||
+          // Peers voting on live poll
+          incoming().diff(existing()).affectedKeys().hasOnly(['poll']) ||
+          // Peers answering live MCQ quiz
+          incoming().diff(existing()).affectedKeys().hasOnly(['mcq'])
+        );
+      allow delete: if isSignedIn() && isValidId(postId) && existing().authorId == request.auth.uid;
+    }
+  }
+}

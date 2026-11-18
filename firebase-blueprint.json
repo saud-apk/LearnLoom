@@ -1,0 +1,374 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Student profile information stored upon authentication.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Unique identifier matching the Firebase Auth UID"
+        },
+        "email": {
+          "type": "string",
+          "description": "Student primary email address"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Full name or student nickname"
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "Profile avatar URL"
+        },
+        "avatarIcon": {
+          "type": "string",
+          "description": "Chosen student avatar emoji or mascot"
+        },
+        "avatarLabel": {
+          "type": "string",
+          "description": "Label of the chosen avatar preset (e.g. Focus, Achiever)"
+        },
+        "avatar": {
+          "type": "object",
+          "description": "Structured avatar representation with icon and label"
+        },
+        "personal": {
+          "type": "object",
+          "description": "Personal profile grouping including full name and age"
+        },
+        "age": {
+          "type": "string",
+          "description": "Student age or grade level"
+        },
+        "academic": {
+          "type": "object",
+          "description": "Structured academic standing grouping"
+        },
+        "gradeBadge": {
+          "type": "string",
+          "description": "Academic grade badge e.g. Grade 9 – 10"
+        },
+        "studentClass": {
+          "type": "string",
+          "description": "Current school class / standard or education stage"
+        },
+        "educationStage": {
+          "type": "string",
+          "description": "Selected stage key e.g. high_school"
+        },
+        "institutionName": {
+          "type": "string",
+          "description": "School or institution name"
+        },
+        "college": {
+          "type": "string",
+          "description": "College or university name if applicable"
+        },
+        "studyPlan": {
+          "type": "object",
+          "description": "Structured daily study plan grouping"
+        },
+        "subjects": {
+          "type": "array",
+          "description": "Selected favorite/focus subjects"
+        },
+        "dailyGoal": {
+          "type": "string",
+          "description": "Daily study duration target"
+        },
+        "dailyCommitment": {
+          "type": "string",
+          "description": "Daily time target"
+        },
+        "primaryGoal": {
+          "type": "string",
+          "description": "Primary academic objective"
+        },
+        "studyTimePreference": {
+          "type": "string",
+          "description": "Preferred study routine"
+        },
+        "studyMotto": {
+          "type": "string",
+          "description": "Personal student study motto or goal"
+        },
+        "status": {
+          "type": "object",
+          "description": "Structured account status, role and streak details"
+        },
+        "role": {
+          "type": "string",
+          "description": "User role: student"
+        },
+        "accountStatus": {
+          "type": "string",
+          "description": "Account status: active"
+        },
+        "streakDays": {
+          "type": "number",
+          "description": "Current consecutive study streak"
+        },
+        "lastActiveDate": {
+          "type": "string",
+          "description": "ISO timestamp of last activity"
+        },
+        "onboardingCompleted": {
+          "type": "boolean",
+          "description": "Whether student has completed onboarding setup"
+        },
+        "onboardingCompletedAt": {
+          "type": "string",
+          "description": "ISO timestamp when onboarding was completed"
+        },
+        "handle": {
+          "type": "string",
+          "description": "Unique student handle e.g. alex_learns"
+        },
+        "major": {
+          "type": "string",
+          "description": "Academic major or branch"
+        },
+        "year": {
+          "type": "string",
+          "description": "Current academic year"
+        },
+        "bio": {
+          "type": "string",
+          "description": "Short student bio"
+        },
+        "savedPostIds": {
+          "type": "array",
+          "description": "List of bookmarked post IDs saved for study revision"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp of account creation"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO timestamp of last profile update"
+        }
+      },
+      "required": ["uid", "email"]
+    },
+    "StudyRoom": {
+      "title": "StudyRoom",
+      "description": "Virtual study room or cohort circle created by students.",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Room title / topic name"
+        },
+        "description": {
+          "type": "string",
+          "description": "Goal or description of the study session"
+        },
+        "topic": {
+          "type": "string",
+          "description": "Subject category (e.g. Computer Science, Mathematics, GATE)"
+        },
+        "hostId": {
+          "type": "string",
+          "description": "Auth UID of the student hosting the room"
+        },
+        "hostName": {
+          "type": "string",
+          "description": "Display name of the host"
+        },
+        "membersCount": {
+          "type": "number",
+          "description": "Total count of enrolled students"
+        },
+        "activeNow": {
+          "type": "number",
+          "description": "Count of students currently active"
+        },
+        "tags": {
+          "type": "array",
+          "description": "Keywords and subject tags"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp"
+        }
+      },
+      "required": ["title", "topic", "hostId", "hostName", "createdAt"]
+    },
+    "StudyNote": {
+      "title": "StudyNote",
+      "description": "Academic note, cheatsheet, or shared resource.",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Title of the note or resource"
+        },
+        "subject": {
+          "type": "string",
+          "description": "Academic subject"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief description of the content"
+        },
+        "resourceLink": {
+          "type": "string",
+          "description": "Link to resource or document"
+        },
+        "authorId": {
+          "type": "string",
+          "description": "UID of the student who posted"
+        },
+        "authorName": {
+          "type": "string",
+          "description": "Name of the student author"
+        },
+        "likesCount": {
+          "type": "number",
+          "description": "Number of upvotes"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp"
+        }
+      },
+      "required": ["title", "subject", "authorId", "authorName", "createdAt"]
+    },
+    "ContactMessage": {
+      "title": "ContactMessage",
+      "description": "Inquiry or feedback sent from the landing page contact form.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Sender full name"
+        },
+        "email": {
+          "type": "string",
+          "description": "Sender email"
+        },
+        "subject": {
+          "type": "string",
+          "description": "Message subject or category"
+        },
+        "message": {
+          "type": "string",
+          "description": "Message content"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Submission timestamp"
+        }
+      },
+      "required": ["name", "email", "message", "createdAt"]
+    },
+    "FeedPost": {
+      "title": "FeedPost",
+      "description": "Student academic question, doubt, or study note post.",
+      "type": "object",
+      "properties": {
+        "authorId": {
+          "type": "string",
+          "description": "Auth UID of the author"
+        },
+        "authorName": {
+          "type": "string",
+          "description": "Display name of the author"
+        },
+        "authorHandle": {
+          "type": "string",
+          "description": "Student handle of the author"
+        },
+        "authorPhotoURL": {
+          "type": "string",
+          "description": "Author avatar image URL"
+        },
+        "authorClass": {
+          "type": "string",
+          "description": "Student class or academic standing"
+        },
+        "authorAvatar": {
+          "type": "string",
+          "description": "Fallback avatar icon"
+        },
+        "content": {
+          "type": "string",
+          "description": "Main post content text"
+        },
+        "imageURL": {
+          "type": "string",
+          "description": "Optional attached diagram or notebook note URL"
+        },
+        "likesCount": {
+          "type": "number",
+          "description": "Total helpful likes count"
+        },
+        "likedUserIds": {
+          "type": "array",
+          "description": "List of user UIDs who liked this post"
+        },
+        "commentsCount": {
+          "type": "number",
+          "description": "Total answers count"
+        },
+        "comments": {
+          "type": "array",
+          "description": "List of answers and replies"
+        },
+        "isSolved": {
+          "type": "boolean",
+          "description": "Whether the question/doubt has a verified solution"
+        },
+        "acceptedAnswerId": {
+          "type": "string",
+          "description": "ID of accepted solution"
+        },
+        "viewsCount": {
+          "type": "number",
+          "description": "Total unique impression view count"
+        },
+        "viewedUserIds": {
+          "type": "array",
+          "description": "List of user UIDs who viewed this post"
+        },
+        "poll": {
+          "type": "object",
+          "description": "Interactive student poll with options and votes"
+        },
+        "mcq": {
+          "type": "object",
+          "description": "Multiple choice quiz question with verified answer and explanation"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp of creation"
+        }
+      },
+      "required": ["authorId", "authorName", "content", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Private student profile document keyed by auth UID"
+    },
+    "/rooms/{roomId}": {
+      "schema": "StudyRoom",
+      "description": "Study circle / cohort document"
+    },
+    "/notes/{noteId}": {
+      "schema": "StudyNote",
+      "description": "Shared student resource document"
+    },
+    "/contactMessages/{messageId}": {
+      "schema": "ContactMessage",
+      "description": "Landing page contact inquiries"
+    },
+    "/posts/{postId}": {
+      "schema": "FeedPost",
+      "description": "Live student feed posts and questions"
+    }
+  }
+}

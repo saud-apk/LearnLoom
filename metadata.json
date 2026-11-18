@@ -1,0 +1,8 @@
+{
+  "name": "Remix LearnLoom",
+  "description": "A student-first social learning community where all students connect, share knowledge and grow together.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
